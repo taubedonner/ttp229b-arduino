@@ -10,6 +10,7 @@ TTP229	KEYWORD1
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
+begin	KEYWORD2
 ReadKey8	KEYWORD2
 GetKey8	KEYWORD2
 ReadKeys8	KEYWORD2

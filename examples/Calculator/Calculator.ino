@@ -31,12 +31,14 @@
 | using the 2-wires serial interface protocol - only 2 arduino pins.           |
 \******************************************************************************/
 /*********************************** CIRCUIT **********************************\
-| 16 Buttons Mode:                                                             |
+| 16 Buttons Multi Keys Mode:                                                  |
 |	* TTP229 VCC to pin VCC                                                    |
 |	* TTP229 GND to pin GND                                                    |
 |	* TTP229 SCL to pin 2                                                      |
 |	* TTP229 SDO to pin 3                                                      |
 |	* TTP229 TP2 to GND via 1 Megohm resistor!                                 |
+|	* TTP229 TP3 to GND via 1 Megohm resistor!                                 |
+|	* TTP229 TP4 to GND via 1 Megohm resistor!                                 |
 |	# See TTP229_Modes.jpg for help...                                         |
 |                                                                              |
 | Important:                                                                   |
@@ -46,24 +48,28 @@
 
 #include <TTP229.h>
 
-const int SCL_PIN = 2;  // The pin number of the clock pin.
-const int SDO_PIN = 3;  // The pin number of the data pin.
+const int SCL_PIN = 2; // The pin number of the clock pin.
+const int SDO_PIN = 3; // The pin number of the data pin.
 
-TTP229 ttp229(SCL_PIN, SDO_PIN); // TTP229(sclPin, sdoPin)
+TTP229 ttp229;
 
 void setup()
 {
+	ttp229.begin(SCL_PIN, SDO_PIN);
 	Serial.begin(115200);
-	Serial.println("Start Touching One Key At a Time!");
+	Serial.println("Start Touching Several Keys Simultaneously!");
 }
 
 void loop()
 {
-	uint8_t key = ttp229.ReadKey16(); // Blocking
-	if (key) Serial.println(key);
-
-//	uint8_t key = ttp229.GetKey16(); // Non Blocking
-//	Serial.println(key);
+	uint8_t sum = 0;
+	uint16_t keys = ttp229.ReadKeys16(); // Blocking
+	
+	for (uint8_t i = 0; i < 16; i++)
+		if (keys & (1 << i))
+			sum += i + 1;
+	
+	Serial.println(sum);
 }
 
 
